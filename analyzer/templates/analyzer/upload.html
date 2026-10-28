@@ -1,0 +1,85 @@
+{% extends 'analyzer/base.html' %}
+
+{% block title %}Upload Resume & Job Description{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="text-center mb-10">
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight sm:text-4xl">
+            Optimize Your Resume with AI
+        </h1>
+        <p class="mt-3 text-lg text-slate-600">
+            Upload your resume and paste a target Job Description to run semantic matching, skill gap analysis, and bullet point impact auditing.
+        </p>
+    </div>
+
+    <div class="bg-white shadow-xl rounded-2xl border border-slate-100 overflow-hidden p-8 sm:p-10">
+        <form method="POST" enctype="multipart/form-data" id="uploadForm" class="space-y-8">
+            {% csrf_token %}
+            
+            <!-- File Upload Section -->
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">
+                    {{ form.file.label }}
+                </label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-xl hover:border-indigo-500 transition-colors bg-slate-50/50">
+                    <div class="space-y-1 text-center">
+                        <svg class="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div class="flex text-sm text-slate-600 justify-center">
+                            <label for="{{ form.file.id_for_label }}" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-hidden">
+                                <span>Upload a file</span>
+                                {{ form.file }}
+                            </label>
+                            <p class="pl-1">or drag and drop</p>
+                        </div>
+                        <p class="text-xs text-slate-500">PDF or DOCX up to 10MB</p>
+                    </div>
+                </div>
+                {% if form.file.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.file.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Job Description Textarea -->
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">
+                    {{ form.job_description_text.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.job_description_text }}
+                </div>
+                {% if form.job_description_text.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.job_description_text.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Submit Button with Loading Indicator -->
+            <div>
+                <button type="submit" id="submitBtn" class="w-full flex justify-center items-center py-4 px-6 border border-transparent rounded-xl shadow-md text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all cursor-pointer">
+                    <span id="btnText">Analyze Resume & Generate Report</span>
+                    <svg id="loadingSpinner" class="hidden animate-spin ml-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Simple script to show spinner when generating embeddings -->
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', function() {
+        const btn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const spinner = document.getElementById('loadingSpinner');
+        
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+        btnText.textContent = 'Running AI Semantic Matcher...';
+        spinner.classList.remove('hidden');
+    });
+</script>
+{% endblock %}

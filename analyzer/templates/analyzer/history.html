@@ -1,0 +1,47 @@
+{% extends 'analyzer/base.html' %}
+
+{% block title %}My Analysis History{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900">Analysis History</h1>
+            <p class="text-sm text-slate-500">View all your previous resume evaluation reports</p>
+        </div>
+        <a href="{% url 'upload_resume' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+            + New Analysis
+        </a>
+    </div>
+
+    {% if reports %}
+        <div class="bg-white shadow-sm rounded-2xl border border-slate-200 overflow-hidden">
+            <div class="divide-y divide-slate-100">
+                {% for r in reports %}
+                    <div class="p-6 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
+                        <div class="space-y-1">
+                            <div class="flex items-center space-x-3">
+                                <span class="font-bold text-slate-900">Report #{{ r.id }}</span>
+                                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">
+                                    Score: {{ r.overall_score }}%
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-400">Evaluated on {{ r.created_at|date:"M d, Y &bull; g:i a" }}</p>
+                        </div>
+                        <a href="{% url 'view_report' r.id %}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition-colors">
+                            View Report &rarr;
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <div class="bg-white p-12 text-center rounded-2xl border border-slate-200">
+            <p class="text-slate-500">You haven't analyzed any resumes yet.</p>
+            <a href="{% url 'upload_resume' %}" class="mt-4 inline-block text-sm font-semibold text-indigo-600 hover:underline">
+                Upload your first resume &rarr;
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
